@@ -2,15 +2,19 @@ export default function Home() {
   return (
     <html lang="en">
       <head>
-        <meta charset="UTF-8" />
+        <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <meta httpEquiv="X-UA-Compatible" content="ie=edge" />
         <title>JRWeinzapfel Training</title>
       </head>
       <body className="bg-gray-100 text-gray-900 font-sans">
         <header className="bg-white shadow-md">
           <div className="container mx-auto p-4">
-            <img src="\images\training-logo.png"></img>
+            <img
+              src="/images/training-logo.png"
+              alt="Logo"
+              className="absolute top-0 left-0 h-24 w-auto m-4"
+            ></img>
             <h1 className="text-4xl font-bold text-center">Home</h1>
             <nav className="mt-4">
               <ul className="flex justify-center space-x-4">
