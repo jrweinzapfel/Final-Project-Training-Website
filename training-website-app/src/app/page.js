@@ -15,7 +15,7 @@ export default function Home() {
               alt="Logo"
               className="absolute top-0 left-0 h-24 w-auto m-4"
             ></img>
-            <h1 className="text-4xl font-bold text-center">Home</h1>
+            <h1 className="text-4xl font-bold text-center text-black">Home</h1>
             <nav className="mt-4">
               <ul className="flex justify-center space-x-4">
                 <li>
@@ -49,7 +49,9 @@ export default function Home() {
         </header>
         <main className="container mx-auto p-4">
           <article className="bg-white p-6 rounded-lg shadow-md">
-            <p className="text-lg">Hello and welcome to my training page!</p>
+            <p className="text-lg text-black">
+              Hello and welcome to my training page!
+            </p>
           </article>
         </main>
       </body>
