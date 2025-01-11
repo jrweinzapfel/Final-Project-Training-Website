@@ -1,3 +1,6 @@
+import { Link } from "react-router-dom";
+import { Programs } from "../../components/Programs";
+
 export default function Home() {
   return (
     <html lang="en">
@@ -19,27 +22,42 @@ export default function Home() {
             <nav className="mt-4">
               <ul className="flex justify-center space-x-4">
                 <li>
-                  <button className="text-lg font-medium text-gray-700 hover:text-gray-900">
+                  <button
+                    className="text-lg font-medium text-gray-700 hover:text-gray-900"
+                    type="button"
+                  >
                     Training
                   </button>
                 </li>
                 <li>
-                  <button className="text-lg font-medium text-gray-700 hover:text-gray-900">
+                  <button
+                    className="text-lg font-medium text-gray-700 hover:text-gray-900"
+                    type="button"
+                  >
                     Programs
                   </button>
                 </li>
                 <li>
-                  <button className="text-lg font-medium text-gray-700 hover:text-gray-900">
+                  <button
+                    className="text-lg font-medium text-gray-700 hover:text-gray-900"
+                    type="button"
+                  >
                     Blog
                   </button>
                 </li>
                 <li>
-                  <button className="text-lg font-medium text-gray-700 hover:text-gray-900">
+                  <button
+                    className="text-lg font-medium text-gray-700 hover:text-gray-900"
+                    type="button"
+                  >
                     About
                   </button>
                 </li>
                 <li>
-                  <button className="text-lg font-medium text-gray-700 hover:text-gray-900">
+                  <button
+                    className="text-lg font-medium text-gray-700 hover:text-gray-900"
+                    type="button"
+                  >
                     Contact
                   </button>
                 </li>

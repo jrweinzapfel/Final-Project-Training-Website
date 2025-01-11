@@ -1,4 +1,4 @@
-export function Blog() {
+export function Contact() {
     return (
         
     )
