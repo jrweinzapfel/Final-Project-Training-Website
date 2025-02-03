@@ -1,0 +1,123 @@
+{
+  "title": "12-Week Hypertrophy Program",
+  "category": "Hypertrophy",
+  "days_per_week": 4,
+  "program_details": {
+    "Day 1: Upper Body Push": {
+      "exercises": [
+        {
+          "name": "Barbell Bench Press",
+          "sets": 4,
+          "reps": "8-12"
+        },
+        {
+          "name": "Incline Dumbbell Press",
+          "sets": 3,
+          "reps": "10-12"
+        },
+        {
+          "name": "Overhead Shoulder Press (Barbell)",
+          "sets": 3,
+          "reps": "8-10"
+        },
+        {
+          "name": "Dumbbell Lateral Raises",
+          "sets": 3,
+          "reps": "12-15"
+        },
+        {
+          "name": "Triceps Dips (Weighted, if possible)",
+          "sets": 3,
+          "reps": "10-12"
+        }
+      ]
+    },
+    "Day 2: Lower Body": {
+      "exercises": [
+        {
+          "name": "Barbell Back Squat",
+          "sets": 4,
+          "reps": "8-12"
+        },
+        {
+          "name": "Romanian Deadlift (Barbell)",
+          "sets": 3,
+          "reps": "10-12"
+        },
+        {
+          "name": "Walking Lunges (Dumbbells)",
+          "sets": 3,
+          "reps": "12 steps per leg"
+        },
+        {
+          "name": "Leg Press",
+          "sets": 3,
+          "reps": "10-12"
+        },
+        {
+          "name": "Standing Calf Raises",
+          "sets": 4,
+          "reps": "15-20"
+        }
+      ]
+    },
+    "Day 3: Upper Body Pull": {
+      "exercises": [
+        {
+          "name": "Pull-Ups (Weighted, if possible)",
+          "sets": 4,
+          "reps": "8-12"
+        },
+        {
+          "name": "Barbell Bent-Over Rows",
+          "sets": 4,
+          "reps": "8-10"
+        },
+        {
+          "name": "Seated Cable Rows",
+          "sets": 3,
+          "reps": "10-12"
+        },
+        {
+          "name": "Face Pulls",
+          "sets": 3,
+          "reps": "12-15"
+        },
+        {
+          "name": "Biceps Barbell Curls",
+          "sets": 3,
+          "reps": "10-12"
+        }
+      ]
+    },
+    "Day 4: Lower Body": {
+      "exercises": [
+        {
+          "name": "Hip Thrusts (Barbell)",
+          "sets": 4,
+          "reps": "8-12"
+        },
+        {
+          "name": "Bulgarian Split Squats (Dumbbells)",
+          "sets": 3,
+          "reps": "10-12 per leg"
+        },
+        {
+          "name": "Deadlifts",
+          "sets": 3,
+          "reps": "8-10"
+        },
+        {
+          "name": "Glute Kickbacks (Cable or Bands)",
+          "sets": 3,
+          "reps": "12-15 per leg"
+        },
+        {
+          "name": "Seated Calf Raises",
+          "sets": 4,
+          "reps": "15-20"
+        }
+      ]
+    }
+  }
+}
