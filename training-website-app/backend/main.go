@@ -4,12 +4,16 @@ import (
 	"log"
 
 	"mattn-sqlite3/db"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	// Initialize the database
 	database := &db.DB{}
 	database.InitDB()
 
+	// Create a sample program and add it to the database
 	program := db.Program{
 		Title:       "12-Week Hypertrophy Program",
 		Category:    "Hypertrophy",
@@ -29,4 +33,13 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	// Initialize Gin router
+	r := gin.Default()
+
+	// Register routes
+	db.RegisterRoutes(r, database)
+
+	// Start the server
+	r.Run(":8080")
 }
