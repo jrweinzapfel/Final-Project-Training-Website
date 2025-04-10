@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 
-	"mattn-sqlite3/db"
-
 	"github.com/gin-gonic/gin"
+
+	"mattn-sqlite3/db"
 )
 
 func main() {

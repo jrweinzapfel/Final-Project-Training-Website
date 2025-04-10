@@ -1,6 +1,7 @@
 package db
 
 import (
+	"log"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -11,6 +12,7 @@ func RegisterRoutes(router *gin.Engine, db *DB) {
 	router.GET("/programs", func(c *gin.Context) {
 		programs, err := db.GetPrograms()
 		if err != nil {
+			log.Printf("Error fetching programs: %v", err)
 			c.JSON(500, gin.H{"error": err.Error()})
 			return
 		}

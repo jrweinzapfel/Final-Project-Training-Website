@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"log"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/lib/pq"
 )
 
 type DB struct {
@@ -31,34 +31,39 @@ type Exercise struct {
 }
 
 func (db *DB) InitDB() {
-	database, err := sql.Open("sqlite3", "./programs.db")
-
+	// Replace with your PostgreSQL connection string
+	connStr := "user=postgres password=Newpassword dbname=programs sslmode=disable"
+	database, err := sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	db.Database = database
 
-	initStmt := `CREATE TABLE IF NOT EXISTS programs (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		title TEXT NOT NULL, 
-		category TEXT NOT NULL, 
-		days_per_week INTEGER NOT NULL);
-		
-		CREATE TABLE IF NOT EXISTS days (
-		id INTEGER PRIMARY KEY AUTOINCREMENT, 
-		program_id INTEGER NOT NULL, 
-		day_name TEXT NOT NULL, 
-		FOREIGN KEY (program_id) REFERENCES programs(id)
-		);
-		
-		CREATE TABLE IF NOT EXISTS exercises (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
+	// Create tables if they don't exist
+	initStmt := `
+	CREATE TABLE IF NOT EXISTS programs (
+		id SERIAL PRIMARY KEY,
+		title TEXT NOT NULL,
+		category TEXT NOT NULL,
+		days_per_week INTEGER NOT NULL
+	);
+
+	CREATE TABLE IF NOT EXISTS days (
+		id SERIAL PRIMARY KEY,
+		program_id INTEGER NOT NULL,
+		day_name TEXT NOT NULL,
+		FOREIGN KEY (program_id) REFERENCES programs(id) ON DELETE CASCADE
+	);
+
+	CREATE TABLE IF NOT EXISTS exercises (
+		id SERIAL PRIMARY KEY,
 		day_id INTEGER NOT NULL,
-		exercise_name TEXT NOT NULL, 
-		sets INTEGER NOT NULL, 
-		reps TEXT NOT NULL, 
-		FOREIGN KEY (day_id) REFERENCES days(id))`
+		exercise_name TEXT NOT NULL,
+		sets INTEGER NOT NULL,
+		reps TEXT NOT NULL,
+		FOREIGN KEY (day_id) REFERENCES days(id) ON DELETE CASCADE
+	);`
 
 	_, err = db.Database.Exec(initStmt)
 	if err != nil {
@@ -72,35 +77,28 @@ func (db *DB) AddProgram(program Program) error {
 		return err
 	}
 
-	programStmt := `INSERT INTO programs (title, category, days_per_week) VALUES (?, ?, ?)`
-	res, err := tx.Exec(programStmt, program.Title, program.Category, program.DaysPerWeek)
+	// Insert the program and retrieve the generated program ID
+	programStmt := `INSERT INTO programs (title, category, days_per_week) VALUES ($1, $2, $3) RETURNING id`
+	var programID int
+	err = tx.QueryRow(programStmt, program.Title, program.Category, program.DaysPerWeek).Scan(&programID)
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
 
-	programID, err := res.LastInsertId()
-	if err != nil {
-		tx.Rollback()
-		return err
-	}
-
-	dayStmt := `INSERT INTO days (program_id, day_name) VALUES (?, ?)`
-	exerciseStmt := `INSERT INTO exercises (day_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?)`
+	// Insert days and retrieve the generated day ID
+	dayStmt := `INSERT INTO days (program_id, day_name) VALUES ($1, $2) RETURNING id`
+	exerciseStmt := `INSERT INTO exercises (day_id, exercise_name, sets, reps) VALUES ($1, $2, $3, $4)`
 
 	for dayName, day := range program.ProgramDetails {
-		res, err := tx.Exec(dayStmt, programID, dayName)
+		var dayID int
+		err := tx.QueryRow(dayStmt, programID, dayName).Scan(&dayID)
 		if err != nil {
 			tx.Rollback()
 			return err
 		}
 
-		dayID, err := res.LastInsertId()
-		if err != nil {
-			tx.Rollback()
-			return err
-		}
-
+		// Insert exercises for the day
 		for _, exercise := range day.Exercises {
 			_, err := tx.Exec(exerciseStmt, dayID, exercise.Name, exercise.Sets, exercise.Reps)
 			if err != nil {
@@ -134,12 +132,11 @@ func (db *DB) GetPrograms() ([]Program, error) {
 
 		program.ProgramDetails = make(ProgramDetails)
 
-		dayStmt := `SELECT id, day_name FROM days WHERE program_id = ?`
+		dayStmt := `SELECT id, day_name FROM days WHERE program_id = $1`
 		dayRows, err := db.Database.Query(dayStmt, programID)
 		if err != nil {
 			return nil, err
 		}
-		defer dayRows.Close()
 
 		for dayRows.Next() {
 			var dayID int
@@ -151,26 +148,26 @@ func (db *DB) GetPrograms() ([]Program, error) {
 				return nil, err
 			}
 
-			exerciseStmt := `SELECT exercise_name, sets, reps FROM exercises WHERE day_id = ?`
+			exerciseStmt := `SELECT exercise_name, sets, reps FROM exercises WHERE day_id = $1`
 			exerciseRows, err := db.Database.Query(exerciseStmt, dayID)
 			if err != nil {
 				return nil, err
 			}
-			defer exerciseRows.Close()
 
 			for exerciseRows.Next() {
 				var exercise Exercise
-
 				err := exerciseRows.Scan(&exercise.Name, &exercise.Sets, &exercise.Reps)
 				if err != nil {
+					exerciseRows.Close()
 					return nil, err
 				}
-
 				day.Exercises = append(day.Exercises, exercise)
 			}
+			exerciseRows.Close()
 
 			program.ProgramDetails[dayName] = day
 		}
+		dayRows.Close()
 
 		programs = append(programs, program)
 
@@ -184,7 +181,7 @@ func (db *DB) GetPrograms() ([]Program, error) {
 }
 
 func (db *DB) GetProgram(programID int) (Program, error) {
-	programStmt := `SELECT id, title, category, days_per_week FROM programs WHERE id = ?`
+	programStmt := `SELECT id, title, category, days_per_week FROM programs WHERE id = $1`
 	row := db.Database.QueryRow(programStmt, programID)
 
 	var program Program
@@ -195,12 +192,11 @@ func (db *DB) GetProgram(programID int) (Program, error) {
 
 	program.ProgramDetails = make(ProgramDetails)
 
-	dayStmt := `SELECT id, day_name FROM days WHERE program_id = ?`
+	dayStmt := `SELECT id, day_name FROM days WHERE program_id = $1`
 	dayRows, err := db.Database.Query(dayStmt, programID)
 	if err != nil {
 		return Program{}, err
 	}
-	defer dayRows.Close()
 
 	for dayRows.Next() {
 		var dayID int
@@ -212,22 +208,25 @@ func (db *DB) GetProgram(programID int) (Program, error) {
 			return Program{}, err
 		}
 
-		exerciseStmt := `SELECT exercise_name, sets, reps FROM exercises WHERE day_id = ?`
+		exerciseStmt := `SELECT exercise_name, sets, reps FROM exercises WHERE day_id = $1`
 		exerciseRows, err := db.Database.Query(exerciseStmt, dayID)
 		if err != nil {
 			return Program{}, err
 		}
-		defer exerciseRows.Close()
 
 		for exerciseRows.Next() {
 			var exercise Exercise
 			err := exerciseRows.Scan(&exercise.Name, &exercise.Sets, &exercise.Reps)
 			if err != nil {
+				exerciseRows.Close()
 				return Program{}, err
 			}
 			day.Exercises = append(day.Exercises, exercise)
 		}
+		exerciseRows.Close()
+
 		program.ProgramDetails[dayName] = day
 	}
+	dayRows.Close()
 	return program, nil
 }
