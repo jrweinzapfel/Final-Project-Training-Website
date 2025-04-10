@@ -77,7 +77,6 @@ func (db *DB) AddProgram(program Program) error {
 		return err
 	}
 
-	// Insert the program and retrieve the generated program ID
 	programStmt := `INSERT INTO programs (title, category, days_per_week) VALUES ($1, $2, $3) RETURNING id`
 	var programID int
 	err = tx.QueryRow(programStmt, program.Title, program.Category, program.DaysPerWeek).Scan(&programID)
@@ -86,7 +85,6 @@ func (db *DB) AddProgram(program Program) error {
 		return err
 	}
 
-	// Insert days and retrieve the generated day ID
 	dayStmt := `INSERT INTO days (program_id, day_name) VALUES ($1, $2) RETURNING id`
 	exerciseStmt := `INSERT INTO exercises (day_id, exercise_name, sets, reps) VALUES ($1, $2, $3, $4)`
 
@@ -98,7 +96,6 @@ func (db *DB) AddProgram(program Program) error {
 			return err
 		}
 
-		// Insert exercises for the day
 		for _, exercise := range day.Exercises {
 			_, err := tx.Exec(exerciseStmt, dayID, exercise.Name, exercise.Sets, exercise.Reps)
 			if err != nil {

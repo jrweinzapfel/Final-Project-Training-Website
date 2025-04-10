@@ -8,7 +8,7 @@ import (
 )
 
 func RegisterRoutes(router *gin.Engine, db *DB) {
-	// Define routes
+
 	router.GET("/programs", func(c *gin.Context) {
 		programs, err := db.GetPrograms()
 		if err != nil {
